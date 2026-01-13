@@ -10,7 +10,6 @@ export default function Home() {
     }))
   );
 
-  // ✅ total item count for cart badge
   const totalCount = products.reduce(
     (sum, product) => sum + product.count,
     0
@@ -22,7 +21,6 @@ export default function Home() {
         <div className="flex  w-200 justify-between">
           <h1 className="text-2xl font-semibold text-white">UseReducer</h1>
 
-          {/* ✅ CART ICON WITH BADGE */}
           <div className="relative">
             <img src="/cart.svg" alt="cart" className="w-9 h-8" />
             {totalCount > 0 && (
@@ -83,7 +81,7 @@ const decrease = (id) => {
           ? { ...p, count: p.count - 1 }
           : p
       )
-      .filter(p => p.count > 0) // 👈 REMOVE HERE
+      .filter(p => p.count > 0) 
   );
 };
 const remove =(id)=>{
