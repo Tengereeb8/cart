@@ -10,17 +10,32 @@ export default function Home() {
     }))
   );
 
+  // ✅ total item count for cart badge
+  const totalCount = products.reduce(
+    (sum, product) => sum + product.count,
+    0
+  );
+
   return (
     <div className="flex flex-col items-center text-black">
       <nav className="w-screen h-20 bg-[#645cff] flex items-center justify-center">
-        {" "}
-        <div className="flex justify-between w-full">
-          {" "}
-          <h1 className="text-2xl font-semibold">UseReducer</h1>{" "}
-          <img src="/cart.svg" alt="" className="w-9 h-8" />{" "}
-        </div>{" "}
+        <div className="flex  w-200 justify-between">
+          <h1 className="text-2xl font-semibold text-white">UseReducer</h1>
+
+          {/* ✅ CART ICON WITH BADGE */}
+          <div className="relative">
+            <img src="/cart.svg" alt="cart" className="w-9 h-8" />
+            {totalCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {totalCount}
+              </span>
+            )}
+          </div>
+        </div>
       </nav>
-      <h1 className="text-3xl font-semibold">YOUR BAG</h1>
+
+      <h1 className="text-3xl font-semibold mt-6">YOUR BAG</h1>
+
       <Products products={products} setProducts={setProducts} />
     </div>
   );
@@ -60,16 +75,33 @@ const Products = ({ products, setProducts }) => {
     );
   };
 
-  const decrease = (id) => {
-    setProducts((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, count: Math.max(1, p.count - 1) } : p
+const decrease = (id) => {
+  setProducts(prev =>
+    prev
+      .map(p =>
+        p.id === id
+          ? { ...p, count: p.count - 1 }
+          : p
       )
-    );
-  };
+      .filter(p => p.count > 0) // 👈 REMOVE HERE
+  );
+};
+const remove =(id)=>{
+  setProducts(prev=>prev.filter(
+    product=>product.id !==id
+  ))
+}
+
+const total=products.reduce((sum, product)=>{
+  return sum+product.price*product.count
+},0)
+
+const clearCart=()=>{
+setProducts([])
+}
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 flex justify-center items-center flex-col ">
       {products.map((product) => (
         <div key={product.id} className="flex gap-6 items-center">
           <img src={product.img} className="w-20" />
@@ -84,10 +116,32 @@ const Products = ({ products, setProducts }) => {
             <span>{product.count}</span>
             <button onClick={() => increase(product.id)}>+</button>
           </div>
-
+          <button onClick={()=>remove(product.id)} className="text-[#645cff] w-13 h-4 m-6 ">remove</button>
           <span className="font-bold">${product.price * product.count}</span>
         </div>
       ))}
+     {products.length > 0 && (
+  <>
+    <div className="flex justify-between items-center w-full">
+      <span>Total</span>
+      <span className="bg-[#645cff] p-1 rounded-sm tracking-widest text-white">
+        ${total}
+      </span>
+    </div>
+
+    <button
+      onClick={clearCart}
+      className="bg-[#c1beff] text-[#645cff] p-1 rounded-sm place-self-center"
+    >
+      Clear cart
+    </button>
+  </>
+)}
+{products.length <= 0 && (
+  <>
+  <p className="text-gray-500 text-3xl">is Empty</p>
+  </>
+)} 
     </div>
   );
 };
